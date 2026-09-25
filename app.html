@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Патчер видео — обработка</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-shell">
+  <header class="topbar">
+    <div class="brand">Патчер видео</div>
+    <div class="user-pill" id="userPill">
+      <span class="dot"></span>
+      <span>ID: <b id="tgIdLabel">—</b></span>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <div class="patch-panel">
+      <h2 class="patch-title">Обработчик</h2>
+      <p class="patch-sub">Видео обрабатывается локально, в браузере. На сервер файл не отправляется и не сохраняется.</p>
+
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="fileInput" accept="video/*">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 16V4M12 4L7 9M12 4L17 9" stroke="#5B8CFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 16V18C4 19.1 4.9 20 6 20H18C19.1 20 20 19.1 20 18V16" stroke="#5B8CFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p class="dz-title">Ставьте сюда ваше видео</p>
+        <p class="dz-sub">или нажмите, чтобы выбрать файл</p>
+      </div>
+
+      <div class="preview-wrap" id="previewWrap">
+        <video id="previewVideo" controls></video>
+        <div class="file-row">
+          <span id="fileMeta">—</span>
+          <button class="clear-btn" id="clearBtn">Убрать</button>
+        </div>
+      </div>
+
+      <p class="local-note">Логика обработки будет добавлена позже. Пока файл только <b>читается локально</b> для предпросмотра.</p>
+    </div>
+  </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

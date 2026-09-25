@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Патчер видео</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="scene">
+  <div class="grid-lines" aria-hidden="true"></div>
+
+  <main class="card" id="card">
+
+    <div class="mark">
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17 3 L30 10 V24 L17 31 L4 24 V10 Z" stroke="#5B8CFF" stroke-width="1.6"/>
+        <path d="M13 17 L16 20 L22 13" stroke="#5B8CFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <h1>Патчер видео</h1>
+    <p class="lede">Загружаете ролик — обработка идёт прямо в браузере, файл никуда не сохраняется. Вход только по Telegram.</p>
+
+    <div class="stage" id="stage-login">
+      <button class="tg-btn" id="tgBtn">
+        <svg width="20" height="20" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="120" cy="120" r="120" fill="#fff"/>
+          <path d="M54 118 L178 70 C184 68 189 72 187 79 L166 178 C164 186 159 188 152 184 L118 159 L101 176 C99 178 97 179 93 179 L96 143 L163 87 C166 84 163 82 159 85 L79 133 L45 122 C38 120 38 116 46 113 L54 118Z" fill="#5B8CFF"/>
+        </svg>
+        Войти через Telegram
+      </button>
+      <p class="hint">Откроется бот <b>@ineasy_4k_bot</b> — нажмите «Запустить» в чате.</p>
+    </div>
+
+    <div class="stage hidden" id="stage-waiting">
+      <div class="spinner" aria-hidden="true"></div>
+      <p class="waiting-text">Ждём подтверждение в Telegram…</p>
+      <button class="link-btn" id="cancelBtn">Отменить</button>
+    </div>
+
+    <div class="stage hidden" id="stage-error">
+      <p class="error-text">Не получилось подтвердить вход. Попробуйте ещё раз.</p>
+      <button class="tg-btn" id="retryBtn">Попробовать снова</button>
+    </div>
+
+  </main>
+</div>
+
+<script src="login.js"></script>
+</body>
+</html>
