@@ -27,7 +27,7 @@ setInterval(() => {
   }
 }, 60 * 60 * 1000);
 
-// --- Телеграм-бот (long polling через telegraf) ---
+// --- Телеграм-бот ---
 const bot = new Telegraf(BOT_TOKEN);
 
 bot.start((ctx) => {
@@ -49,10 +49,6 @@ bot.start((ctx) => {
 
   ctx.reply('✅ Успешно авторизовались!\n\nЗайдите в сайт — вам там ждут.');
 });
-
-bot.launch();
-process.once('SIGINT', () => bot.stop('SIGINT'));
-process.once('SIGTERM', () => bot.stop('SIGTERM'));
 
 // --- Веб-сервер ---
 const app = express();
@@ -83,7 +79,26 @@ app.get('/api/session/:id', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
+// Секретный путь для вебхука — чтобы никто посторонний не мог дёргать этот адрес
+const WEBHOOK_PATH = `/telegram-webhook/${BOT_TOKEN}`;
+app.use(bot.webhookCallback(WEBHOOK_PATH));
+
+app.listen(PORT, async () => {
   console.log(`Сайт запущен: http://localhost:${PORT}`);
-  console.log(`Бот @${BOT_USERNAME} слушает команды...`);
+
+  // На Render (и похожих хостингах) есть публичный HTTPS-адрес — используем вебхук.
+  // Локально на компьютере публичного адреса нет — используем обычный long polling.
+  const publicUrl = process.env.RENDER_EXTERNAL_URL;
+
+  if (publicUrl) {
+    await bot.telegram.setWebhook(`${publicUrl}${WEBHOOK_PATH}`);
+    console.log(`Бот @${BOT_USERNAME} слушает через вебхук: ${publicUrl}${WEBHOOK_PATH}`);
+  } else {
+    await bot.telegram.deleteWebhook();
+    bot.launch();
+    console.log(`Бот @${BOT_USERNAME} слушает команды (локальный polling)...`);
+  }
 });
+
+process.once('SIGINT', () => bot.stop('SIGINT'));
+process.once('SIGTERM', () => bot.stop('SIGTERM'));
