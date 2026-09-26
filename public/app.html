@@ -14,11 +14,46 @@
 <div class="app-shell">
   <header class="topbar">
     <div class="brand">Патчер видео</div>
-    <div class="user-pill" id="userPill">
-      <span class="dot"></span>
-      <span>ID: <b id="tgIdLabel">—</b></span>
+    <div class="balance-pill" id="balancePill">
+      <span>Баланс: <b id="balanceLabel">2 видео</b></span>
+      <button class="plus-btn" id="plusBtn" aria-label="Пополнить">+</button>
     </div>
   </header>
+
+  <!-- Модалка со списком пакетов -->
+  <div class="modal-overlay hidden" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Платные пакеты</h3>
+        <button class="modal-close" id="modalClose">✕</button>
+      </div>
+
+      <div class="modal-body" id="packagesView">
+        <ul class="pkg-list" id="pkgList"></ul>
+      </div>
+
+      <div class="modal-body hidden" id="payView">
+        <p class="pay-title">К оплате</p>
+        <p class="pay-amount" id="payAmount">—</p>
+        <div class="pay-row">
+          <span>Номер для перевода</span>
+          <div class="pay-copy">
+            <b>+7 705 542 37 05</b>
+            <button class="copy-btn" id="copyPhone">Копировать</button>
+          </div>
+        </div>
+        <div class="pay-row">
+          <span>Сумма</span>
+          <div class="pay-copy">
+            <b id="payAmountValue">—</b>
+            <button class="copy-btn" id="copyAmount">Копировать</button>
+          </div>
+        </div>
+        <p class="pay-note">Переведите указанную сумму на этот номер вручную через Kaspi или Apple Pay (без QR). После перевода баланс пополним по факту оплаты.</p>
+        <button class="link-btn" id="backToPkgs">← Назад к пакетам</button>
+      </div>
+    </div>
+  </div>
 
   <main class="app-main">
     <div class="patch-panel">
