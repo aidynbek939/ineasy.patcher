@@ -1,25 +1,38 @@
-// --- Проверяем, что пользователь авторизован (ID нужен только для этого) ---
+// --- Проверяем, что пользователь авторизован ---
 const tgId = localStorage.getItem('tg_id');
 
 if (!tgId) {
   window.location.href = '/';
 }
 
-// --- Баланс видео (пока хранится локально, реальное списание добавим с логикой обработчика) ---
+document.getElementById('tgIdLabel').textContent = tgId;
+
+document.getElementById('copyIdBtn').addEventListener('click', () => {
+  navigator.clipboard.writeText(tgId).then(() => {
+    const btn = document.getElementById('copyIdBtn');
+    const old = btn.textContent;
+    btn.textContent = '✓';
+    setTimeout(() => { btn.textContent = old; }, 1200);
+  });
+});
+
+// --- Баланс видео (хранится на сервере, привязан к Telegram ID) ---
 const balanceLabel = document.getElementById('balanceLabel');
 
-function getBalance() {
-  const stored = localStorage.getItem('video_balance');
-  return stored === null ? 2 : parseInt(stored, 10); // по умолчанию 2 видео
+async function loadBalance() {
+  try {
+    const res = await fetch(`/api/balance/${tgId}`);
+    const data = await res.json();
+    balanceLabel.textContent = `${data.balance} видео`;
+  } catch (e) {
+    balanceLabel.textContent = '—';
+  }
 }
-
-function renderBalance() {
-  const n = getBalance();
-  balanceLabel.textContent = `${n} видео`;
-}
-renderBalance();
+loadBalance();
 
 // --- Пакеты покупки ---
+const BOT_USERNAME = 'ineasybot';
+
 const PACKAGES = [
   { count: 3, price: 450 },
   { count: 5, price: 725 },
@@ -31,28 +44,20 @@ const PACKAGES = [
   { count: 100, price: 11000 },
 ];
 
-const PHONE = '+7 705 542 37 05';
-
 const modalOverlay = document.getElementById('modalOverlay');
 const plusBtn = document.getElementById('plusBtn');
 const modalClose = document.getElementById('modalClose');
 const pkgList = document.getElementById('pkgList');
-const packagesView = document.getElementById('packagesView');
-const payView = document.getElementById('payView');
-const payAmountEl = document.getElementById('payAmount');
-const payAmountValueEl = document.getElementById('payAmountValue');
-const backToPkgs = document.getElementById('backToPkgs');
-const copyPhone = document.getElementById('copyPhone');
-const copyAmount = document.getElementById('copyAmount');
 
 function renderPackages() {
   pkgList.innerHTML = '';
   PACKAGES.forEach(pkg => {
     const li = document.createElement('li');
     li.className = 'pkg-row';
+    const link = `https://t.me/${BOT_USERNAME}?start=buy_${pkg.count}_${pkg.price}`;
     li.innerHTML = `
       <span class="pkg-text">${pkg.count} видео × ${(pkg.price / pkg.count).toFixed(0).replace(/\.0$/, '')} ₸ = <b>${pkg.price.toLocaleString('ru-RU')} ₸</b></span>
-      <button class="pkg-buy" data-price="${pkg.price}">Купить</button>
+      <a class="pkg-buy" href="${link}" target="_blank" rel="noopener">Купить</a>
     `;
     pkgList.appendChild(li);
   });
@@ -61,8 +66,7 @@ renderPackages();
 
 function openModal() {
   modalOverlay.classList.remove('hidden');
-  packagesView.classList.remove('hidden');
-  payView.classList.add('hidden');
+  loadBalance();
 }
 function closeModal() {
   modalOverlay.classList.add('hidden');
@@ -73,32 +77,6 @@ modalClose.addEventListener('click', closeModal);
 modalOverlay.addEventListener('click', (e) => {
   if (e.target === modalOverlay) closeModal();
 });
-
-pkgList.addEventListener('click', (e) => {
-  const btn = e.target.closest('.pkg-buy');
-  if (!btn) return;
-  const price = btn.dataset.price;
-  payAmountEl.textContent = `${Number(price).toLocaleString('ru-RU')} ₸`;
-  payAmountValueEl.textContent = `${Number(price).toLocaleString('ru-RU')} ₸`;
-  packagesView.classList.add('hidden');
-  payView.classList.remove('hidden');
-});
-
-backToPkgs.addEventListener('click', () => {
-  payView.classList.add('hidden');
-  packagesView.classList.remove('hidden');
-});
-
-function copyText(text, btn) {
-  navigator.clipboard.writeText(text).then(() => {
-    const old = btn.textContent;
-    btn.textContent = 'Скопировано';
-    setTimeout(() => { btn.textContent = old; }, 1500);
-  });
-}
-
-copyPhone.addEventListener('click', () => copyText(PHONE.replace(/\s/g, ''), copyPhone));
-copyAmount.addEventListener('click', () => copyText(payAmountValueEl.textContent, copyAmount));
 
 // --- Дропзона: всё полностью локально, ничего никуда не отправляется ---
 const dropzone = document.getElementById('dropzone');
